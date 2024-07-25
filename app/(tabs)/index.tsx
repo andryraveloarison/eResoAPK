@@ -8,11 +8,13 @@ import { TouchableOpacity, Text } from 'react-native';
 import { useRef } from 'react';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
 
 export default function HomeScreen() {
 
   const cameraRef = useRef<any>(null);
+
 
 
   async function requestCameraPermissions() {
@@ -23,6 +25,40 @@ export default function HomeScreen() {
   }
 
 
+  async function readImage(uri: string): Promise<Blob> {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    return blob;
+  }
+
+
+  async function uploadImageToServer(uri: string) {
+    const blob = await readImage(uri);
+  
+
+    const formData = new FormData();
+    formData.append('file', blob);
+    
+    formData.append('Content-Type', 'image/jpeg');
+    console.log(formData)
+
+    try {
+
+      await FileSystem.uploadAsync('http://192.168.0.111:5000/resolve', uri, {
+        httpMethod: 'POST',
+        uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+        fieldName: 'file'
+      })
+      .then((response)=>{
+          console.log(response)
+      })
+  
+    } catch (error) {
+      console.log("test")
+      console.error(error);
+    }
+  }
+
   async function takePhoto() {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -32,10 +68,10 @@ export default function HomeScreen() {
     });
   
     console.log(result);
-  
     if (!result.canceled) {
-      // Traitez l'image ici, par exemple en l'affichant ou en la stockant
+      uploadImageToServer(result.assets[0].uri)        
     }
+    
   }
 
 
