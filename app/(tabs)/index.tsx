@@ -3,27 +3,17 @@ import { StyleSheet, Platform } from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { View } from 'react-native';
+import { View,Image } from 'react-native';
 import { TouchableOpacity, Text } from 'react-native';
-import { useRef } from 'react';
-import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import { useState } from 'react';
 
 
 export default function HomeScreen() {
 
-  const cameraRef = useRef<any>(null);
-
-
-
-  async function requestCameraPermissions() {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    if (status !== 'granted') {
-      alert('Sorry, we need camera permissions to make this work!');
-    }
-  }
-
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [reponse , setReponse] = useState<String[]>([])
 
   async function readImage(uri: string): Promise<Blob> {
     const response = await fetch(uri);
@@ -49,8 +39,12 @@ export default function HomeScreen() {
         uploadType: FileSystem.FileSystemUploadType.MULTIPART,
         fieldName: 'file'
       })
-      .then((response)=>{
-          console.log(response)
+      .then(reponse=>{
+        let rep  = JSON.parse(reponse.body);
+
+        console.log(rep.data); // Affiche l'objet JSON complet
+        
+        setReponse(rep.data)
       })
   
     } catch (error) {
@@ -69,15 +63,16 @@ export default function HomeScreen() {
   
     console.log(result);
     if (!result.canceled) {
+      setImageUri(result.assets[0].uri); // Stocke l'URI de l'image dans l'état
       uploadImageToServer(result.assets[0].uri)        
     }
     
   }
 
-
-  
   return (
     <View style={styles.vue}>
+
+      
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title" style={styles.titre}>
           Welcome!  <HelloWave />
@@ -87,6 +82,17 @@ export default function HomeScreen() {
         <TouchableOpacity style={styles.buttonContainer} onPress={takePhoto}>
           <Text style={styles.buttonText}>Prendre une photo</Text>
         </TouchableOpacity>
+
+        {imageUri && <Image source={{ uri: imageUri }} style={{ width: 200, height: 200 }} />}
+        {reponse && (
+          <>
+            {reponse.map((item, index) => (
+              <Text key={index}>{item}</Text>
+            ))}
+          </>
+        )}
+
+
     </View>
   );
 }
@@ -102,7 +108,6 @@ const styles = StyleSheet.create({
   },
   vue:{
 
-    backgroundColor:'red',
     marginTop: 50
 
   },
@@ -112,6 +117,7 @@ const styles = StyleSheet.create({
   },
   
   buttonContainer: {
+    backgroundColor:'red',
     height: 40, // Hauteur fixe, ajustez selon vos besoins
     justifyContent: 'center', // Centrer le texte verticalement
     alignItems: 'center', 
