@@ -42,9 +42,9 @@ export default function HomeScreen() {
       .then(reponse=>{
         let rep  = JSON.parse(reponse.body);
 
-        console.log(rep.data); // Affiche l'objet JSON complet
-        
-        setReponse(rep.data)
+        console.log(rep.data); 
+        alert(rep.data)
+        //setReponse(rep.data)
       })
   
     } catch (error) {
@@ -83,13 +83,27 @@ export default function HomeScreen() {
           <Text style={styles.buttonText}>Prendre une photo</Text>
         </TouchableOpacity>
 
-        {imageUri && <Image source={{ uri: imageUri }} style={{ width: 200, height: 200 }} />}
+        {imageUri && 
+          <Image 
+            source={{ uri: imageUri }} 
+            style={{
+              width: 200,
+              height: 200,
+              borderWidth: 2, // Largeur de la bordure
+              borderColor: '#000', // Couleur de la bordure
+              borderRadius: 10, // Arrondi des coins de la bordure
+            }}
+          />
+        }
+      
         {reponse && (
+
           <>
             {reponse.map((item, index) => (
               <Text key={index}>{item}</Text>
             ))}
           </>
+
         )}
 
 
@@ -107,8 +121,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   vue:{
-
-    marginTop: 50
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap:10
 
   },
   titre:{
@@ -117,11 +133,13 @@ const styles = StyleSheet.create({
   },
   
   buttonContainer: {
-    backgroundColor:'red',
+    backgroundColor:'grey',
     height: 40, // Hauteur fixe, ajustez selon vos besoins
     justifyContent: 'center', // Centrer le texte verticalement
     alignItems: 'center', 
-    textAlign:'center'// Centrer le texte horizontalemen
+    textAlign:'center',
+    padding:10,
+    borderRadius: 20
   },
   
   buttonText: {
