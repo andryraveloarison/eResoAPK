@@ -34,7 +34,9 @@ export default function HomeScreen() {
 
     try {
 
-      await FileSystem.uploadAsync('http://192.168.0.111:5000/resolve', uri, {
+      await FileSystem.uploadAsync('http://192.168.117.239:5000/resolve', uri, {
+      //await FileSystem.uploadAsync('http://192.168.137.148:5000/resolve', uri, {
+
         httpMethod: 'POST',
         uploadType: FileSystem.FileSystemUploadType.MULTIPART,
         fieldName: 'file'
@@ -43,11 +45,11 @@ export default function HomeScreen() {
         let rep  = JSON.parse(reponse.body);
 
         console.log(rep.data); 
-        alert(rep.data)
-        //setReponse(rep.data)
+        setReponse(rep.data)
       })
   
     } catch (error) {
+      alert("Erreur lors de la lecture de l'image")
       console.log("test")
       console.error(error);
     }
@@ -100,7 +102,8 @@ export default function HomeScreen() {
 
           <>
             {reponse.map((item, index) => (
-              <Text key={index}>{item}</Text>
+              <Text style={ index != (reponse.length - 1) ? styles.resolution : styles.reponse} key={index}>
+              {item}</Text>
             ))}
           </>
 
@@ -149,5 +152,15 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
-  }
+  },
+
+  resolution:{
+    fontSize: 20
+  },
+
+  reponse:{
+    fontSize:20,
+    borderWidth: 2,
+    padding: 5
+   }
 });
