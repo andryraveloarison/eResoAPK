@@ -34,7 +34,7 @@ export default function HomeScreen() {
 
     try {
 
-      await FileSystem.uploadAsync('http://192.168.117.239:5000/resolve', uri, {
+      await FileSystem.uploadAsync('http://192.168.0.103:5000/resolve', uri, {
       //await FileSystem.uploadAsync('http://192.168.137.148:5000/resolve', uri, {
 
         httpMethod: 'POST',
@@ -77,7 +77,7 @@ export default function HomeScreen() {
       
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title" style={styles.titre}>
-          Welcome!  <HelloWave />
+          Calculeo !  <HelloWave />
         </ThemedText>  
       </ThemedView>
       
